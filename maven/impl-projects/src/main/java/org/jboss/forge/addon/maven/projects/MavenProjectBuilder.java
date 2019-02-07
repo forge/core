@@ -107,7 +107,7 @@ public class MavenProjectBuilder implements ProjectBuilder
       {
          selected.add("-P" + String.join(",", profiles));
       }
-      boolean success = project.getFacet(MavenFacet.class).executeMavenEmbedded(selected, out, err);
+      boolean success = project.getFacet(MavenFacet.class).executeMaven(selected, out, err);
 
       if (success)
       {

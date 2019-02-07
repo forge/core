@@ -334,6 +334,41 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
       return cliRequest;
    }
 
+   @Override public boolean executeMaven(List<String> parameters, PrintStream out, PrintStream err)
+   {
+      List<String> list = new ArrayList<>();
+      // FORGE-1912: Maven settings are not being set in embedded maven
+      if (System.getProperty(MavenContainer.ALT_USER_SETTINGS_XML_LOCATION) != null)
+      {
+         list.add("-s");
+         list.add(System.getProperty(MavenContainer.ALT_USER_SETTINGS_XML_LOCATION));
+      }
+      else if (System.getProperty(MavenContainer.ALT_GLOBAL_SETTINGS_XML_LOCATION) != null)
+      {
+         list.add("-s");
+         list.add(System.getProperty(MavenContainer.ALT_GLOBAL_SETTINGS_XML_LOCATION));
+      }
+      if (parameters != null)
+      {
+         list.addAll(parameters);
+      }
+      try
+      {
+         DirectoryResource directory = getFaceted().getRoot().reify(DirectoryResource.class);
+         if (directory == null)
+            throw new IllegalStateException("Cannot execute maven build on resources that are not File-based.");
+         int returnValue = NativeSystemCall.execFromPath(getMvnCommand(), list.toArray(new String[list.size()]), out, directory);
+         if (returnValue == 0)
+            return true;
+         else
+            return executeMavenEmbedded(list, out, err);
+      }
+      catch (IOException e)
+      {
+         return executeMavenEmbedded(list, out, err);
+      }
+   }
+
    @Override
    public boolean executeMaven(final List<String> parameters)
    {
