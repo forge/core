@@ -2,8 +2,8 @@ image::http://design.jboss.org/jbossforge/logo/final/jbossforge_logo_600px.png[]
 
 The fastest way to build applications, share your software, and enjoy doing it.
 
-image:https://forge.ci.cloudbees.com/job/forge-core/badge/icon["Build Status", link="https://forge.ci.cloudbees.com/job/forge-core/"] 
-image:https://img.shields.io/github/license/forge/core.svg["License", link="https://www.eclipse.org/legal/epl-v10.html"] 
+image:https://travis-ci.org/forge/core.svg?branch=master["Build Status", link="https://travis-ci.org/forge/core"]
+image:https://img.shields.io/github/license/forge/core.svg["License", link="https://www.eclipse.org/legal/epl-v10.html"]
 image:https://maven-badges.herokuapp.com/maven-central/org.jboss.forge/forge-distribution/badge.svg["Maven Central", link="https://maven-badges.herokuapp.com/maven-central/org.jboss.forge/forge-distribution"] 
 image:https://kiwiirc.com/buttons/irc.freenode.net/forge.png["Visit our IRC channel", link="https://kiwiirc.com/client/irc.freenode.net/#forge"] 
 
