@@ -5,10 +5,7 @@
 version: 2
 jobs:
   build:
-    docker:
-      # specify the version you desire here
-      - image: circleci/openjdk:8-jdk
-
+    machine: true
     steps:
       - checkout
 
@@ -16,8 +13,6 @@ jobs:
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "pom.xml" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
 
       - run: mvn clean install -DskipTests
 
@@ -27,4 +22,4 @@ jobs:
           key: v1-dependencies-{{ checksum "pom.xml" }}
 
       # run tests!
-      - run: mvn test
+      - run: mvn install
