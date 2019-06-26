@@ -25,7 +25,7 @@ FROM ADDON
 
 RESOURCES
 ---------
-JBoss Forge: <http://forge.jboss.org/>
+JBoss Forge: <https://forge.jboss.org/>
 
 
 COPYING

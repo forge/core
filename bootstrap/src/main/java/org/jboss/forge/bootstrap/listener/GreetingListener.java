@@ -38,7 +38,7 @@ public class GreetingListener implements ContainerLifecycleListener
          out.println("");
          out.print("JBoss Forge, version [ ");
          out.print(Versions.getImplementationVersionFor(getClass()));
-         out.print(" ] - JBoss, by Red Hat, Inc. [ http://forge.jboss.org ]");
+         out.print(" ] - JBoss, by Red Hat, Inc. [ https://forge.jboss.org ]");
          out.println();
          out.println("Hit '<TAB>' for a list of available commands and 'man [cmd]' for help on a specific command.");
          out.println();

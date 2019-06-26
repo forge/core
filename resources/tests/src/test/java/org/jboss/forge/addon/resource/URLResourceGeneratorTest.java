@@ -32,7 +32,7 @@ public class URLResourceGeneratorTest
    @Test
    public void testCreateURLResource() throws Exception
    {
-      URL url = new URL("http://forge.jboss.org");
+      URL url = new URL("https://forge.jboss.org");
       Resource<?> resource = factory.create(url);
       Assert.assertNotNull(resource);
       Assert.assertTrue(resource instanceof URLResource);
@@ -42,7 +42,7 @@ public class URLResourceGeneratorTest
    @Test
    public void testCreateURLResourceFromString() throws Exception
    {
-      String url = "http://forge.jboss.org";
+      String url = "https://forge.jboss.org";
       Resource<?> resource = factory.create(url);
       Assert.assertNotNull(resource);
       Assert.assertTrue(resource instanceof URLResource);

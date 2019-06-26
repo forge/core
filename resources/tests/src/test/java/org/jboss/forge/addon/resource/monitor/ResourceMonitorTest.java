@@ -74,7 +74,7 @@ public class ResourceMonitorTest
    @Test(expected = IllegalArgumentException.class)
    public void testResourceMonitorShouldThrowIllegalArgumentOnUnsupportedResource() throws Exception
    {
-      URLResource resource = resourceFactory.create(URLResource.class, new URL("http://forge.jboss.org"));
+      URLResource resource = resourceFactory.create(URLResource.class, new URL("https://forge.jboss.org"));
       Assert.assertNotNull(resource);
       monitor = resourceFactory.monitor(resource);
    }

@@ -42,7 +42,7 @@ import org.junit.runner.RunWith;
 public class MavenPluginFacetTest
 {
    private static final String REPOSITORY_ID = "repository_id";
-   private static final String REPOSITORY_URL = "http://forge.jboss.org";
+   private static final String REPOSITORY_URL = "https://forge.jboss.org";
    private static final org.jboss.forge.addon.maven.profiles.Profile TEST_PROFILE_ID = ProfileBuilder.create().setId(
             "test_profile");
 

@@ -12,7 +12,7 @@
    <packaging>pom</packaging>
    <name>Forge - BOM</name>
    <description>The Forge "Bill of Materials"</description>
-   <url>http://forge.jboss.org</url>
+   <url>https://forge.jboss.org</url>
 
    <licenses>
       <license>

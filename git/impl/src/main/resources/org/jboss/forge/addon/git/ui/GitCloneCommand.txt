@@ -41,7 +41,7 @@ The Forge team
 
 RESOURCES
 ---------
-forge: <http://forge.jboss.org/>
+forge: <https://forge.jboss.org/>
 asciidoc: <http://asciidoc.org/>
 
 
