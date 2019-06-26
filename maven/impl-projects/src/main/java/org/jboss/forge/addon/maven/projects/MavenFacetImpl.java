@@ -9,6 +9,7 @@ package org.jboss.forge.addon.maven.projects;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Constructor;
@@ -357,27 +358,28 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
          DirectoryResource directory = getFaceted().getRoot().reify(DirectoryResource.class);
          if (directory == null)
             throw new IllegalStateException("Cannot execute maven build on resources that are not File-based.");
-         int returnValue = NativeSystemCall.execFromPath(getMvnCommand(), list.toArray(new String[list.size()]), out, directory);
-         if (returnValue == 0)
-            return true;
-         else
-            return executeMavenEmbedded(list, out, err);
+         int returnValue = NativeSystemCall.execFromPath(getMvnCommand(), list.toArray(new String[0]), out, directory);
+         switch (returnValue) {
+            case 0: return true;
+            case -1: return false;
+            default:
+               return executeMavenEmbedded(list, out, err);
+         }
       }
       catch (IOException e)
       {
-         return executeMavenEmbedded(list, out, err);
+         return false;
       }
    }
 
    @Override
    public boolean executeMaven(final List<String> parameters)
    {
-      return executeMaven(parameters.toArray(new String[parameters.size()]));
+      return executeMaven(parameters.toArray(new String[0]));
    }
 
    public boolean executeMaven(final String[] selected)
    {
-      // return executeMaven(new NullOutputStream(), selected);
       return executeMaven(System.out, selected);
    }
 
@@ -410,6 +412,9 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
             return true;
          else
             return executeMavenEmbedded(params);
+      }
+      catch (InterruptedIOException e) {
+         return false;
       }
       catch (IOException e)
       {

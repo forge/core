@@ -9,6 +9,9 @@ package org.jboss.forge.addon.maven.projects.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UncheckedIOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.furnace.util.Assert;
@@ -21,6 +24,9 @@ import org.jboss.forge.furnace.util.Assert;
  */
 public class NativeSystemCall
 {
+
+   private static final Logger logger = Logger.getLogger(NativeSystemCall.class.getName());
+
    /**
     * Execute a native system command as if it were run from the given path.
     *
@@ -37,6 +43,7 @@ public class NativeSystemCall
       Assert.notNull(command, "Command must not be null.");
       Assert.notNull(path, "Directory path must not be null.");
       Assert.notNull(out, "OutputStream must not be null.");
+      Process p = null;
       try
       {
          String[] commandTokens = parms == null ? new String[1] : new String[parms.length + 1];
@@ -50,7 +57,7 @@ public class NativeSystemCall
          ProcessBuilder builder = new ProcessBuilder(commandTokens);
          builder.directory(path.getUnderlyingResourceObject());
          builder.redirectErrorStream(true);
-         Process p = builder.start();
+         p = builder.start();
 
          InputStream stdout = p.getInputStream();
 
@@ -63,7 +70,8 @@ public class NativeSystemCall
       }
       catch (InterruptedException e)
       {
-         e.printStackTrace();
+         p.destroy();
+         logger.log(Level.FINE, "Interrupted native execution",e);
          return -1;
       }
    }
@@ -95,7 +103,7 @@ public class NativeSystemCall
       private final InputStream in;
       private final OutputStream out;
 
-      public Receiver(InputStream in, OutputStream out)
+      Receiver(InputStream in, OutputStream out)
       {
          this.in = in;
          this.out = out;
@@ -116,7 +124,7 @@ public class NativeSystemCall
          }
          catch (IOException e)
          {
-            throw new RuntimeException("Error reading input from child process", e);
+            throw new UncheckedIOException("Error reading input from child process", e);
          }
       }
    }
