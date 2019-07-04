@@ -4,7 +4,7 @@
    <parent>
       <groupId>org.jboss.forge</groupId>
       <artifactId>forge-parent</artifactId>
-      <version>3.9.4-SNAPSHOT</version>
+      <version>3.9.4.Final</version>
    </parent>
    <groupId>org.jboss.forge.addon</groupId>
    <artifactId>configuration-parent</artifactId>
