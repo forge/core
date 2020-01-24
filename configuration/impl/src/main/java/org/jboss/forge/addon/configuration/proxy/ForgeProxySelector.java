@@ -41,8 +41,8 @@ public class ForgeProxySelector extends ProxySelector
       {
          throw new IllegalArgumentException("URI can't be null.");
       }
-      String protocol = uri.getScheme();
-      if ("http".equalsIgnoreCase(protocol) || "https".equalsIgnoreCase(protocol))
+
+      if (proxySettings != null && isProxyAvailable(uri))
       {
          ArrayList<Proxy> result = new ArrayList<Proxy>();
          result.add(new Proxy(Type.HTTP, new InetSocketAddress(proxySettings.getProxyHost(),
@@ -71,6 +71,20 @@ public class ForgeProxySelector extends ProxySelector
          result.add(Proxy.NO_PROXY);
          return result;
       }
+   }
+
+   private boolean isProxyAvailable(final URI uri)
+   {
+      final String host = uri.getHost();
+      final String protocol = uri.getScheme();
+
+      boolean isValidProtocol =
+               "http".equalsIgnoreCase(protocol) || "https".equalsIgnoreCase(protocol);
+
+      boolean isHostExcluded =
+               proxySettings.getNonProxyHosts() != null
+                        && proxySettings.getNonProxyHosts().contains(host);
+      return isValidProtocol && !isHostExcluded;
    }
 
    @Override
