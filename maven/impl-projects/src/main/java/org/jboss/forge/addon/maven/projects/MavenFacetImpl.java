@@ -424,7 +424,7 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
 
    private String getMvnCommand()
    {
-      return OperatingSystemUtils.isWindows() ? "mvn.bat" : "mvn";
+      return OperatingSystemUtils.isWindows() ? "mvn.cmd" : "mvn";
    }
 
    @Override
