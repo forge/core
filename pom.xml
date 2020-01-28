@@ -59,7 +59,7 @@
       <forge.release.codename>Three</forge.release.codename>
       <forge.release.version>${project.version}</forge.release.version>
 
-      <version.furnace>2.28.3.Final</version.furnace>
+      <version.furnace>2.28.4.Final</version.furnace>
       <version.junit>4.12</version.junit>
       <version.jboss-logmanager>2.1.0.Final</version.jboss-logmanager>
    </properties>
