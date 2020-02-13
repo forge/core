@@ -3,7 +3,7 @@
    <parent>
       <groupId>org.jboss.forge.addon</groupId>
       <artifactId>rest-client-parent</artifactId>
-      <version>3.9.6.Final</version>
+      <version>3.9.7-SNAPSHOT</version>
    </parent>
    <artifactId>rest-client-tests</artifactId>
    <name>Forge - Rest Client Addon Integration Tests</name>

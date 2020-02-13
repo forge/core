@@ -3,7 +3,7 @@
    <parent>
       <groupId>org.jboss.forge.addon</groupId>
       <artifactId>maven-parent</artifactId>
-      <version>3.9.6.Final</version>
+      <version>3.9.7-SNAPSHOT</version>
    </parent>
    <artifactId>maven-tests</artifactId>
    <name>Forge - Maven Addon Tests</name>
