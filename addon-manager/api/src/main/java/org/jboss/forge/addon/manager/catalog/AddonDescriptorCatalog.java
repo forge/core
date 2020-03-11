@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.manager.impl.catalog;
+package org.jboss.forge.addon.manager.catalog;
 
 import java.util.List;
 
@@ -16,4 +16,7 @@ import java.util.List;
 public interface AddonDescriptorCatalog
 {
    List<AddonDescriptor> getAddonDescriptors();
+
+   String getName();
+   
 }

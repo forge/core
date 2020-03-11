@@ -12,8 +12,8 @@ import java.util.StringJoiner;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 
-import org.jboss.forge.addon.manager.impl.catalog.AddonDescriptor;
-import org.jboss.forge.addon.manager.impl.catalog.AddonDescriptorCatalogRegistry;
+import org.jboss.forge.addon.manager.catalog.AddonDescriptor;
+import org.jboss.forge.addon.manager.catalog.AddonDescriptorCatalogRegistry;
 import org.jboss.forge.addon.manager.impl.ui.AddonCommandConstants;
 import org.jboss.forge.addon.manager.impl.ui.AddonInstallCommand;
 import org.jboss.forge.addon.resource.Resource;
@@ -30,13 +30,14 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
+import org.jboss.forge.furnace.addons.AddonRegistry;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 
 /**
  *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
-public class AddonInstallFromCatalogCommand implements UICommand, AddonCommandConstants
-{
+public class AddonInstallFromCatalogCommand implements UICommand, AddonCommandConstants {
 
    private UISelectOne<AddonDescriptor> addon;
 
@@ -49,7 +50,7 @@ public class AddonInstallFromCatalogCommand implements UICommand, AddonCommandCo
                .setLabel("Addon")
                .setRequired(true)
                .setNote(() -> addon.hasValue() ? addon.getValue().getDescription() : null)
-               .setValueChoices(AddonDescriptorCatalogRegistry.INSTANCE.find(""))
+               .setValueChoices(getAddonDescriptorCatalogRegistry().find(""))
                .setItemLabelConverter(gui ? AddonDescriptor::getName : AddonDescriptor::getId);
       builder.add(addon);
    }
@@ -87,5 +88,11 @@ public class AddonInstallFromCatalogCommand implements UICommand, AddonCommandCo
       {
          return Results.success(result.toString());
       }
+   }
+
+   AddonDescriptorCatalogRegistry getAddonDescriptorCatalogRegistry() {
+      final AddonRegistry addonRegistry = SimpleContainer.getFurnace(getClass().getClassLoader()).getAddonRegistry();
+      return addonRegistry.getServices(AddonDescriptorCatalogRegistry.class).get();
+
    }
 }

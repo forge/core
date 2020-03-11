@@ -12,8 +12,10 @@ import static org.hamcrest.CoreMatchers.is;
 import java.util.List;
 
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.addon.manager.impl.catalog.AddonDescriptor;
-import org.jboss.forge.addon.manager.impl.catalog.AddonDescriptorCatalogRegistry;
+import org.jboss.forge.addon.manager.catalog.AddonDescriptor;
+import org.jboss.forge.addon.manager.catalog.AddonDescriptorCatalogRegistry;
+import org.jboss.forge.furnace.addons.AddonRegistry;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,10 +28,14 @@ import org.junit.runner.RunWith;
 public class ForgeAddonDescriptorCatalogTest
 {
    @Test
-   public void testGetAddonDescriptors()
-   {
-      List<AddonDescriptor> addons = AddonDescriptorCatalogRegistry.INSTANCE.find("arquillian");
+   public void testGetAddonDescriptors() {
+      List<AddonDescriptor> addons = getAddonDescriptorCatalogRegistry().find("arquillian");
       Assert.assertThat(addons.isEmpty(), is(false));
+   }
+
+   AddonDescriptorCatalogRegistry getAddonDescriptorCatalogRegistry() {
+      final AddonRegistry addonRegistry = SimpleContainer.getFurnace(getClass().getClassLoader()).getAddonRegistry();
+      return addonRegistry.getServices(AddonDescriptorCatalogRegistry.class).get();
    }
 
 }
