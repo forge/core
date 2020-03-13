@@ -5,10 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.manager.impl.catalog;
-
-import org.jboss.forge.addon.manager.impl.ui.catalog.AddonInstallFromCatalogCommand;
-import org.jboss.forge.addon.manager.impl.ui.catalog.AddonSearchCommand;
+package org.jboss.forge.addon.manager.catalog;
 
 /**
  * An addon descriptor as present in https://github.com/forge/website-data/tree/master/addons YAMLs

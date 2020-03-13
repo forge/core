@@ -10,8 +10,8 @@ package org.jboss.forge.addon.manager.impl.ui.catalog;
 import java.io.PrintStream;
 import java.util.List;
 
-import org.jboss.forge.addon.manager.impl.catalog.AddonDescriptor;
-import org.jboss.forge.addon.manager.impl.catalog.AddonDescriptorCatalogRegistry;
+import org.jboss.forge.addon.manager.catalog.AddonDescriptor;
+import org.jboss.forge.addon.manager.catalog.AddonDescriptorCatalogRegistry;
 import org.jboss.forge.addon.manager.impl.ui.AddonCommandConstants;
 import org.jboss.forge.addon.manager.impl.ui.AddonInstallCommand;
 import org.jboss.forge.addon.ui.command.UICommand;
@@ -26,6 +26,8 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
+import org.jboss.forge.furnace.addons.AddonRegistry;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 
 import com.inamik.text.tables.SimpleTable;
 import com.inamik.text.tables.grid.Border;
@@ -35,8 +37,7 @@ import com.inamik.text.tables.grid.Util;
  *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
-public class AddonSearchCommand implements UICommand, AddonCommandConstants
-{
+public class AddonSearchCommand implements UICommand, AddonCommandConstants {
    private UIInputMany<String> arguments;
 
    @Override
@@ -64,7 +65,7 @@ public class AddonSearchCommand implements UICommand, AddonCommandConstants
    public Result execute(UIExecutionContext context) throws Exception
    {
       Iterable<String> value = arguments.getValue();
-      List<AddonDescriptor> addons = AddonDescriptorCatalogRegistry.INSTANCE.find(value.iterator().next());
+      List<AddonDescriptor> addons = getAddonDescriptorCatalogRegistry().find(value.iterator().next());
       UIOutput output = context.getUIContext().getProvider().getOutput();
       PrintStream out = output.out();
       SimpleTable table = SimpleTable.of()
@@ -81,5 +82,11 @@ public class AddonSearchCommand implements UICommand, AddonCommandConstants
       }
       Util.print(Border.SINGLE_LINE.apply(table.toGrid()), out);
       return Results.success();
+   }
+
+   AddonDescriptorCatalogRegistry getAddonDescriptorCatalogRegistry() {
+      final AddonRegistry addonRegistry = SimpleContainer.getFurnace(getClass().getClassLoader()).getAddonRegistry();
+      return addonRegistry.getServices(AddonDescriptorCatalogRegistry.class).get();
+
    }
 }

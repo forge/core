@@ -11,33 +11,29 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.jboss.forge.addon.manager.catalog.AddonDescriptor;
+import org.jboss.forge.addon.manager.catalog.AddonDescriptorCatalog;
+import org.jboss.forge.addon.manager.catalog.AddonDescriptorCatalogRegistry;
+
 /**
  *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
-public enum AddonDescriptorCatalogRegistry
-{
-   INSTANCE;
+public class AddonDescriptorCatalogRegistryImpl implements AddonDescriptorCatalogRegistry {
 
    private List<AddonDescriptorCatalog> catalogs = new ArrayList<>();
 
-   private AddonDescriptorCatalogRegistry()
-   {
-      add(new ForgeAddonDescriptorCatalog());
-   }
-
-   public AddonDescriptorCatalogRegistry add(AddonDescriptorCatalog catalog)
-   {
+   public AddonDescriptorCatalogRegistry add(AddonDescriptorCatalog catalog) {
       catalogs.add(catalog);
       return this;
    }
 
-   public AddonDescriptorCatalogRegistry remove(AddonDescriptorCatalog catalog)
-   {
-      catalogs.remove(catalog);
-      return this;
+   @Override
+   public boolean removeByName(String name) {
+      return catalogs.removeIf(t -> t.getName().equalsIgnoreCase(name));
    }
 
+   @Override
    public List<AddonDescriptor> find(String query)
    {
       List<AddonDescriptor> result = new ArrayList<>();
@@ -51,4 +47,10 @@ public enum AddonDescriptorCatalogRegistry
       }
       return result;
    }
+
+   @Override
+   public String toString() {
+      return "AddonDescriptorCatalogRegistryImpl [catalogs=" + catalogs + "]";
+   }
+   
 }

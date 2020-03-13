@@ -1,1 +1,2 @@
 org.jboss.forge.addon.manager.watch.AddonWatchServiceImpl
+org.jboss.forge.addon.manager.impl.catalog.AddonDescriptorCatalogRegistryProducer
