@@ -56,12 +56,7 @@ public class ProxySettings
       Configuration proxyConfig = configuration.subset("proxy");
       if (proxyConfig != null && !proxyConfig.isEmpty())
       {
-         final String nonProxyHosts = proxyConfig.getString(PROXY_CONFIG_NON_PROXY_HOSTS);
-         List<String> nonProxyHostsList = null;
-         if (nonProxyHosts != null)
-         {
-            nonProxyHostsList = Arrays.asList(nonProxyHosts.split(","));
-         }
+         List<String> nonProxyHostsList = Arrays.asList(proxyConfig.getStringArray(PROXY_CONFIG_NON_PROXY_HOSTS));
 
          return new ProxySettings(
                   proxyConfig.getString(PROXY_CONFIG_HOST_KEY),
