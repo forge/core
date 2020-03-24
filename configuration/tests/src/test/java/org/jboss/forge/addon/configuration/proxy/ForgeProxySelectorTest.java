@@ -49,7 +49,7 @@ public class ForgeProxySelectorTest
    @Test
    public void testProxyWithExclusion() throws URISyntaxException
    {
-      final List<String> nonProxyHosts = Collections.singletonList("non.proxied.org");
+      final List<String> nonProxyHosts = Collections.singletonList("*.proxied.org");
       final ProxySettings proxySettings =
                ProxySettings.fromHostPortAndNonProxyHosts(PROXY_HOST, PROXY_PORT, nonProxyHosts);
       final ForgeProxySelector forgeProxySelector = new ForgeProxySelector(null, proxySettings);
