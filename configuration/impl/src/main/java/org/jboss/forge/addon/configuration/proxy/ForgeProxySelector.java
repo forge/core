@@ -17,6 +17,7 @@ import java.net.SocketAddress;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /*
  * Implemented following the guide at:
@@ -81,10 +82,18 @@ public class ForgeProxySelector extends ProxySelector
       boolean isValidProtocol =
                "http".equalsIgnoreCase(protocol) || "https".equalsIgnoreCase(protocol);
 
-      boolean isHostExcluded =
-               proxySettings.getNonProxyHosts() != null
-                        && proxySettings.getNonProxyHosts().contains(host);
-      return isValidProtocol && !isHostExcluded;
+      return isValidProtocol && !isHostExcluded(host);
+   }
+
+   private boolean isHostExcluded(String target)
+   {
+         boolean result = false;
+         if (proxySettings.getNonProxyHosts() != null) {
+            result = proxySettings.getNonProxyHosts()
+                        .stream()
+                        .anyMatch(nonHost -> Pattern.matches(Globs.toUnixRegexPattern(nonHost), target));
+         }
+         return result;
    }
 
    @Override
