@@ -10,7 +10,6 @@ import org.jboss.forge.addon.javaee.jpa.JPADataSource;
 import org.jboss.forge.addon.javaee.jpa.PersistenceContainer;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.stacks.Stack;
-import org.jboss.forge.roaster.model.util.Strings;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
 
 /**
@@ -39,7 +38,8 @@ public class NonJTAContainer implements PersistenceContainer
    @Override
    public void validate(JPADataSource dataSource) throws Exception
    {
-      if (Strings.isNullOrEmpty(dataSource.getJndiDataSource()))
+      String jndiDataSource = dataSource.getJndiDataSource();
+      if (jndiDataSource == null || jndiDataSource.trim().isEmpty())
       {
          throw new RuntimeException("Must specify a JNDI data-source.");
       }

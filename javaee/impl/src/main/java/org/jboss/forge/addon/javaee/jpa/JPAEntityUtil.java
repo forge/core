@@ -1,6 +1,6 @@
 /**
  * Copyright 2016 Red Hat, Inc. and/or its affiliates.
- *
+ * <p>
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
@@ -13,17 +13,17 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import org.apache.commons.lang.StringUtils;
 import org.jboss.forge.roaster.model.Annotation;
 import org.jboss.forge.roaster.model.Field;
 import org.jboss.forge.roaster.model.JavaClass;
 import org.jboss.forge.roaster.model.Member;
 import org.jboss.forge.roaster.model.Method;
-import org.jboss.forge.roaster.model.util.Strings;
 
 /**
- * 
+ *
  * Utility class for determining use properties of JPA Entities.
- * 
+ *
  * @author <a href="salem.elrahal@gmail.com">Salem Elrahal</a>
  */
 public class JPAEntityUtil
@@ -58,7 +58,8 @@ public class JPAEntityUtil
                {
                   // It's a getter
                   if (method.getParameters().size() == 0
-                           && (method.getReturnType() != null && type.equals(method.getReturnType().getQualifiedName())))
+                           && (method.getReturnType() != null && type.equals(
+                           method.getReturnType().getQualifiedName())))
                   {
                      if (method.getName().toLowerCase().contains(name.toLowerCase()))
                      {
@@ -80,7 +81,7 @@ public class JPAEntityUtil
                if (member instanceof Method && memberName.startsWith("get"))
                {
                   memberName = memberName.substring(3);
-                  memberName = Strings.uncapitalize(memberName);
+                  memberName = StringUtils.uncapitalize(memberName);
                }
                result = memberName;
             }
@@ -103,13 +104,15 @@ public class JPAEntityUtil
       if (entity.hasAnnotation(Entity.class))
       {
          Annotation<?> a = entity.getAnnotation(Entity.class);
-         if (!Strings.isNullOrEmpty(a.getStringValue("name")))
+         String nameAttribute = a.getStringValue("name");
+         String value = a.getStringValue();
+         if (nameAttribute != null && !nameAttribute.isEmpty())
          {
-            table = a.getStringValue("name");
+            table = nameAttribute;
          }
-         else if (!Strings.isNullOrEmpty(a.getStringValue()))
+         else if (value != null && !value.isEmpty())
          {
-            table = a.getStringValue();
+            table = value;
          }
       }
       return table;
@@ -137,7 +140,7 @@ public class JPAEntityUtil
             {
                if (name.startsWith("get"))
                {
-                  associationField = Strings.uncapitalize(name.substring(3));
+                  associationField = StringUtils.uncapitalize(name.substring(3));
                }
             }
             else if (member instanceof Field)
@@ -174,7 +177,7 @@ public class JPAEntityUtil
             if (member instanceof Method)
             {
                // Getters are expected to obey JavaBean conventions
-               id = Strings.uncapitalize(memberName.substring(3));
+               id = StringUtils.uncapitalize(memberName.substring(3));
             }
             if (member instanceof Field)
             {
@@ -201,7 +204,7 @@ public class JPAEntityUtil
             if (member instanceof Method)
             {
                // Getters are expected to obey JavaBean conventions
-               id = Strings.uncapitalize(memberName.substring(3));
+               id = StringUtils.uncapitalize(memberName.substring(3));
             }
             if (member instanceof Field)
             {

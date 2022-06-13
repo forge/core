@@ -10,8 +10,6 @@ package org.jboss.forge.addon.database.tools.generate;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.forge.roaster.model.util.Strings;
-
 /**
  *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
@@ -64,11 +62,11 @@ public class Database
 
    public boolean isCatalogSet()
    {
-      return !Strings.isNullOrEmpty(catalog);
+      return catalog != null && !catalog.trim().isEmpty();
    }
 
    public boolean isSchemaSet()
    {
-      return !Strings.isNullOrEmpty(schema);
+      return schema != null && !schema.trim().isEmpty();
    }
 }

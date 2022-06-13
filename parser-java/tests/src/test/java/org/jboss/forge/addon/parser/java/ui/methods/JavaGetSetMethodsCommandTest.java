@@ -12,6 +12,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import javax.inject.Inject;
 
@@ -279,7 +280,7 @@ public class JavaGetSetMethodsCommandTest
                project.getFacet(JavaSourceFacet.class).getJavaResource(targetClass));
    }
 
-   private void reloadTargetClass() throws FileNotFoundException
+   private void reloadTargetClass() throws IOException
    {
       targetClass = Roaster.parse(JavaClassSource.class,
                project.getFacet(JavaSourceFacet.class).getJavaResource(targetClass)

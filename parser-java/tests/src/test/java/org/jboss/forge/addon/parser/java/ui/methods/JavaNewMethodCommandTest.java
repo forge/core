@@ -1,12 +1,13 @@
 /**
  * Copyright 2016 Red Hat, Inc. and/or its affiliates.
- *
+ * <p>
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
 package org.jboss.forge.addon.parser.java.ui.methods;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Arrays;
 
 import javax.inject.Inject;
@@ -73,7 +74,7 @@ public class JavaNewMethodCommandTest
    @Before
    public void setup() throws Exception
    {
-      project = projectFactory.createTempProject(Arrays.<Class<? extends ProjectFacet>> asList(JavaSourceFacet.class));
+      project = projectFactory.createTempProject(Arrays.<Class<? extends ProjectFacet>>asList(JavaSourceFacet.class));
    }
 
    @After
@@ -442,7 +443,7 @@ public class JavaNewMethodCommandTest
                project.getFacet(JavaSourceFacet.class).getJavaResource(targetClass));
    }
 
-   private void reloadTargetClass() throws FileNotFoundException
+   private void reloadTargetClass() throws IOException
    {
       targetClass = Roaster.parse(JavaClassSource.class,
                project.getFacet(JavaSourceFacet.class).getJavaResource(targetClass)

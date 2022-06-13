@@ -34,7 +34,6 @@ import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.roaster.model.util.FormatterProfileReader;
-import org.jboss.forge.roaster.model.util.Strings;
 
 public class JavaFormatSourcesCommand extends AbstractUICommand
 {
@@ -74,13 +73,13 @@ public class JavaFormatSourcesCommand extends AbstractUICommand
       Configuration userConfig = furnace.getAddonRegistry().getServices(Configuration.class).get();
       ResourceFactory resourceFactory = furnace.getAddonRegistry().getServices(ResourceFactory.class).get();
       String profileName = userConfig.getString(JavaResource.FORMATTER_PROFILE_NAME_KEY);
-      if (!Strings.isNullOrEmpty(profileName))
+      if (profileName != null && !profileName.trim().isEmpty())
       {
          profilename.setDefaultValue(profileName);
       }
 
       String path = userConfig.getString(JavaResource.FORMATTER_PROFILE_PATH_KEY);
-      if (!Strings.isNullOrEmpty(path))
+      if (path != null && !path.trim().isEmpty())
       {
          XMLResource resource = resourceFactory.create(XMLResource.class, new File(path));
          profilepath.setDefaultValue(resource);

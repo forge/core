@@ -13,6 +13,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.lang.annotation.Documented;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -384,7 +385,7 @@ public class JavaAddAnnotationCommandTest
                project.getFacet(JavaSourceFacet.class).getJavaResource(targetClass));
    }
 
-   private void reloadTargetClass() throws FileNotFoundException
+   private void reloadTargetClass() throws IOException
    {
       targetClass = Roaster.parse(JavaClassSource.class,
                project.getFacet(JavaSourceFacet.class).getJavaResource(targetClass)
