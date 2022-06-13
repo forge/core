@@ -348,7 +348,7 @@ public class JavaAddAnnotationCommandTest
       }
       catch (IllegalArgumentException ex)
       {
-         assertTrue(ex.getMessage().contains("Can't parse annotation"));
+         assertTrue(ex.getMessage().contains("couldn't be added"));
       }
    }
 
