@@ -10,7 +10,7 @@ image:https://kiwiirc.com/buttons/irc.freenode.net/forge.png["Visit our IRC chan
 What's new and noteworthy?
 --------------------------
 
-- *JDK 8*: Forge 3 now runs on JDK 8 as its minimum requirement. Hello lambdas!
+- *JDK 11*: Forge 3 now runs on JDK 11 as its minimum requirement. Hello lambdas!
 
 - *Unix-like option names*: The shell option names are now more unix-like: Eg: `--targetPackage` is now `--target-package`.
 
