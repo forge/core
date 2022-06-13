@@ -6,6 +6,7 @@
  */
 package org.jboss.forge.addon.resource.zip;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
@@ -17,7 +18,7 @@ import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.VirtualResource;
 import org.jboss.forge.furnace.util.Assert;
 
-import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.model.FileHeader;
 import net.lingala.zip4j.model.UnzipParameters;
@@ -58,8 +59,7 @@ public class ZipFileResourceEntryImpl extends VirtualResource<String>implements 
       try
       {
          return getZipFile().getInputStream(fileHeader);
-      }
-      catch (ZipException e)
+      } catch (IOException e)
       {
          throw new ResourceException("Error while fetching zip contents", e);
       }
@@ -101,7 +101,7 @@ public class ZipFileResourceEntryImpl extends VirtualResource<String>implements 
       try
       {
          UnzipParameters parameters = new UnzipParameters();
-         getZipFile().extractFile(fileHeader, directoryResource.getFullyQualifiedName(), parameters, newName);
+         getZipFile().extractFile(fileHeader, directoryResource.getFullyQualifiedName(), newName, parameters);
       }
       catch (ZipException e)
       {

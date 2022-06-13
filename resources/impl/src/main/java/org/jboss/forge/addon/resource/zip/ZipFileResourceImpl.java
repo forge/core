@@ -21,7 +21,7 @@ import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.forge.furnace.util.Strings;
 
-import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.model.FileHeader;
 import net.lingala.zip4j.model.ZipParameters;
@@ -38,15 +38,7 @@ public class ZipFileResourceImpl extends AbstractFileResource<ZipFileResource>im
    public ZipFileResourceImpl(ResourceFactory resourceFactory, File file)
    {
       super(resourceFactory, file);
-      try
-      {
-         this.zipFile = new ZipFile(file);
-      }
-      catch (ZipException e)
-      {
-         // This is only thrown when file is null, it should never happen
-         throw new ResourceException("Error while creating ZipFile", e);
-      }
+      this.zipFile = new ZipFile(file);
    }
 
    ZipFile getZipFile()
@@ -76,7 +68,6 @@ public class ZipFileResourceImpl extends AbstractFileResource<ZipFileResource>im
    }
 
    @Override
-   @SuppressWarnings("unchecked")
    protected List<Resource<?>> doListResources()
    {
       List<Resource<?>> entries = new ArrayList<>();
@@ -124,14 +115,7 @@ public class ZipFileResourceImpl extends AbstractFileResource<ZipFileResource>im
    @Override
    public ZipFileResource setPassword(char[] password)
    {
-      try
-      {
-         getZipFile().setPassword(password);
-      }
-      catch (ZipException e)
-      {
-         throw new ResourceException("Error while setting the zip password", e);
-      }
+      getZipFile().setPassword(password);
       return this;
    }
 
@@ -190,14 +174,13 @@ public class ZipFileResourceImpl extends AbstractFileResource<ZipFileResource>im
          }
          else
          {
-            parameters.setSourceExternalStream(true);
             try (InputStream stream = resource.getResourceInputStream())
             {
                getZipFile().addStream(stream, parameters);
             }
          }
       }
-      catch (IOException | ZipException e)
+      catch (IOException e)
       {
          throw new ResourceException("Error while adding files to zip file", e);
       }
