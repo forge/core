@@ -16,6 +16,7 @@ import javax.enterprise.inject.spi.InjectionPoint;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang.StringUtils;
 import org.jboss.forge.addon.javaee.cdi.ui.input.Qualifiers;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.ui.context.UIBuilder;
@@ -33,7 +34,6 @@ import org.jboss.forge.roaster.model.Visibility;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.forge.roaster.model.source.ParameterSource;
-import org.jboss.forge.roaster.model.util.Strings;
 import org.jboss.forge.roaster.model.util.Types;
 
 /**
@@ -145,7 +145,7 @@ public class CDIAddProducerMethodCommand extends AbstractMethodCDICommand
                   .setBody("")
                   .setReturnTypeVoid()
                   .addParameter(returnType.getValue(),
-                           Strings.uncapitalize(Types.toSimpleName(returnType.getValue())) + "ToDispose");
+                           StringUtils.uncapitalize(Types.toSimpleName(returnType.getValue())) + "ToDispose");
          disposedParam.addAnnotation(Disposes.class);
          for (String qualifier : qualifiers.getValue())
          {

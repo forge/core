@@ -17,7 +17,6 @@ import org.jboss.forge.roaster.model.Method;
 import org.jboss.forge.roaster.model.Parameter;
 import org.jboss.forge.roaster.model.Type;
 import org.jboss.forge.roaster.model.source.MethodHolderSource;
-import org.jboss.forge.roaster.model.util.Strings;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -64,7 +63,7 @@ public class JavaMethodResourceImpl extends AbstractJavaMemberResource<Method> i
       Type<?> methodReturnType = method.getReturnType();
       String returnType = (method.isReturnTypeVoid() || methodReturnType == null) ? "void" : methodReturnType
                .getQualifiedName();
-      return String.format("%s(%s)::%s", method.getName(), Strings.join(parameterTypes, ","), returnType);
+      return String.format("%s(%s)::%s", method.getName(), String.join(",", parameterTypes), returnType);
    }
 
    @Override

@@ -16,6 +16,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.lang.StringUtils;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.templates.Template;
 import org.jboss.forge.addon.templates.TemplateFactory;
@@ -28,7 +29,6 @@ import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.forge.roaster.model.util.Refactory;
-import org.jboss.forge.roaster.model.util.Strings;
 import org.jboss.forge.roaster.model.util.Types;
 
 /**
@@ -343,11 +343,11 @@ public class DTOClassBuilder
       map.put("fieldName", fieldName);
       map.put("fieldGetter", property.getAccessor().getName() + "()");
       map.put("nestedDTOType", nestedDTOClass.getName());
-      map.put("jpaIterator", "iter" + Strings.capitalize(fieldName));
+      map.put("jpaIterator", "iter" + StringUtils.capitalize(fieldName));
       map.put("simpleParameterizedType", simpleParameterizedType);
-      map.put("jpaVar", Strings.uncapitalize(simpleParameterizedType));
-      map.put("dtoIterator", "iterDto" + Strings.capitalize(fieldName));
-      map.put("dtoVar", "dto" + Strings.capitalize(simpleParameterizedType));
+      map.put("jpaVar", StringUtils.uncapitalize(simpleParameterizedType));
+      map.put("dtoIterator", "iterDto" + StringUtils.capitalize(fieldName));
+      map.put("dtoVar", "dto" + StringUtils.capitalize(simpleParameterizedType));
       map.put("jpqlVar", simpleParameterizedType.toLowerCase().substring(0, 1));
 
       String output;
@@ -397,7 +397,7 @@ public class DTOClassBuilder
       Map<Object, Object> map = new HashMap<>();
       map.put("fieldName", property.getName());
       map.put("nestedDTOType", nestedDTOClass.getName());
-      map.put("collectionIterator", "iter" + Strings.capitalize(property.getName()));
+      map.put("collectionIterator", "iter" + StringUtils.capitalize(property.getName()));
       map.put("elementType", parameterizedType.getName());
       map.put("fieldGetter", property.getAccessor().getName() + "()");
       String output;

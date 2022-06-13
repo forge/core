@@ -27,6 +27,7 @@ import org.jboss.forge.addon.resource.ResourceException;
 import org.jboss.forge.addon.resource.ResourceFacet;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.util.ResourceUtil;
+import org.jboss.forge.furnace.util.Streams;
 import org.jboss.forge.roaster.ParserException;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.EnumConstant;
@@ -38,7 +39,6 @@ import org.jboss.forge.roaster.model.MemberHolder;
 import org.jboss.forge.roaster.model.Method;
 import org.jboss.forge.roaster.model.source.JavaSource;
 import org.jboss.forge.roaster.model.util.FormatterProfileReader;
-import org.jboss.forge.roaster.spi.Streams;
 
 /**
  * @author Mike Brock

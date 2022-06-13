@@ -44,7 +44,6 @@ import org.jboss.forge.roaster.model.source.AnnotationSource;
 import org.jboss.forge.roaster.model.source.AnnotationTargetSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.PropertySource;
-import org.jboss.forge.roaster.model.util.Strings;
 
 @SuppressWarnings("unchecked")
 public class ValidationGenerateConstraintWizardStep extends AbstractJavaEECommand implements UIWizardStep
@@ -312,7 +311,7 @@ public class ValidationGenerateConstraintWizardStep extends AbstractJavaEEComman
       if (!literals.isEmpty())
       {
          annotation.setLiteralValue(name,
-                  literals.size() == 1 ? literals.get(0) : String.format("{%s}", Strings.join(literals, ",")));
+                  literals.size() == 1 ? literals.get(0) : String.format("{%s}", String.join(",", literals)));
       }
    }
 
